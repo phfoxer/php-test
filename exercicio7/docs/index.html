@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Documentação</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/exercicio7/assets/bootstrap/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <h2>API REST documentation</h2>
+        <h3>Requeriments</h3>
+        <ul>
+            <li>PHP 7.0 >=</li>
+            <li>Apache2.0 >=</li>
+            <li>Rewrite mode On</li>
+        </ul>
+        <h2>Methods and actions</h2>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Verb</th>
+                    <th>Route</th>
+                    <th>Action</th>
+                    <th>Return</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>GET</td>
+                    <td>
+                        <code class=" language-php"><span class="token operator">/</span>exercicio7/api/users/list</code>
+                    </td>
+                    <td>list</td>
+                    <td>All users list</td>
+                </tr>
+                <tr>
+                    <td>POST</td>
+                    <td>
+                        <code class=" language-php"><span class="token operator">/</span>exercicio7/api/users/create</code>
+                    </td>
+                    <td>create</td>
+                    <td>If the user was created the api returns a object "done" as boolean and a message</td>
+                </tr>
+                <tr>
+                    <td>PUT</td>
+                    <td>
+                        <code class=" language-php"><span class="token operator">/</span>exercicio7/api/users/update</code>
+                    </td>
+                    <td>update</td>
+                    <td>If the user was created the api returns a object "done" as boolean and a message.</td>
+                </tr>
+                <tr>
+                    <td>DELETE</td>
+                    <td>
+                        <code class=" language-php"><span class="token operator">/</span>exercicio7/api/users/delete</code>
+                    </td>
+                    <td>delete</td>
+                    <td>You must send only the email to delete the user.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+
+</html>

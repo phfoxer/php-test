@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Formulário</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/exercicio4/assets/bootstrap/css/bootstrap.min.css">
+  <script src="/exercicio4/assets/bootstrap/js/jquery.min.js"></script>
+  <script src="/exercicio4/assets/bootstrap/js/bootstrap.min.js"></script>
+  <script src="/exercicio4/assets/angular-1.6.9/angular.min.js"></script>
+  <style>
+  </style>
+</head>
+
+<body>
+  <div class="container" ng-app="exemple4App" ng-controller="exemple4Ctrl" role="main">
+    <div class="jumbotron">
+      <form novalidate name="form_name">
+        <div class="row">
+          <div class="col-xs-12">
+            <div ng-show="(error)" class="alert alert-danger">{{error}}</div>
+            <div ng-show="(done)" class="alert alert-success">{{done}}</div>
+          </div>
+          <div class="col-xs-6">
+            <div class="form-group">
+              <label for="login">Login
+                <app-required></app-required>
+              </label>
+              <input name="login" required placeholder="Informe seu login" ng-model="usuario.login" min="2" type="text" class="form-control"
+                id="login">
+            </div>
+          </div>
+          <div class="col-xs-6">
+            <div class="form-group">
+              <label for="pwd">Password
+                <app-required></app-required>
+              </label>
+              <input name="senha" required placeholder="Informe sua senha" ng-model="usuario.senha" type="password" class="form-control"
+                id="pwd">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-6">
+            <div class="form-group">
+              <label for="nome">Nome
+                <app-required></app-required>
+              </label>
+              <input name="nome" placeholder="Informe seu nome" required ng-model="usuario.nome" type="text" class="form-control" id="nome">
+            </div>
+          </div>
+          <div class="col-xs-6">
+            <div class="form-group">
+              <label for="sobrenome">Sobrenome
+                <app-required></app-required>
+              </label>
+              <input name="sobrenome" placeholder="Informe seu sobrenome" required ng-model="usuario.sobrenome" type="text" class="form-control"
+                id="sobrenome">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-6">
+            <div class="form-group">
+              <label for="email">E-mail
+                <app-required></app-required>
+              </label>
+              <input nome="email" placeholder="Informe seu e-mail" required ng-model="usuario.email" type="email" class="form-control"
+                id="email">
+            </div>
+          </div>
+          <div class="col-xs-6">
+            <div class="form-group" ng-class="{'has-error': (form_name.telefone.$touched && form_name.telefone.$invalid) }">
+              <label for="text">Telefone
+                <app-required></app-required>
+              </label>
+              <input name="telefone" placeholder="Informe seu telefone" required pattern="[\(]\d{2}[\)]\d{4}[\-]\d{4}" placeholder="(xx)xxxx-xxxx"
+                ng-model="usuario.telefone" type="text" class="form-control" id="telefone" />
+              <sup>
+                O formato do telefone deve obedecer o seguinte exemplo (71)9236-0303
+              </sup>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" ng-disabled="form_name.$invalid" ng-click="enviarDados()" class="btn btn-primary">Enviar</button>
+      </form>
+    </div>
+
+  </div>
+
+
+  <script>
+    var app = angular.module('exemple4App', []);
+    app.controller('exemple4Ctrl', function ($scope, $http) {
+      $scope.error = false;
+      $scope.usuario = {
+        nome: '',
+        sobrenome: '',
+        email: '',
+        telefone: '',
+        login: '',
+        senha: ''
+      };
+      $scope.enviarDados = function () {
+        $http.post('/exercicio4/api.php', $scope.usuario).then(function (response) {
+          if(response.data=='done'){
+            $scope.error = false;
+            $scope.done = 'Salvo com sucesso!';
+          } else {
+            $scope.done = false;
+            $scope.error = response.data;
+          }
+        });
+      };
+    });
+    app.directive("appRequired", function () {
+      return { template: '<span style="color: red">*</span>' };
+    });
+  </script>
+</body>
+
+</html>

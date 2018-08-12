@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Formulário</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/exercicio7/assets/bootstrap/css/bootstrap.min.css">
+  <style>
+    .container .jumbotron,
+    .container-fluid .jumbotron {
+      padding: 15px 30px !important;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container" ng-app="exemple7App" ng-controller="exemple7Ctrl" role="main">
+    <ul>
+      <li> <a href="/exercicio7/docs/index.html">Api Documentation</a></li>
+    </ul>
+    <div class="jumbotron">
+      <div class="row">
+        <div class="col-xs-12">
+          <h2 ng-show="!isUpdate">Criar novo usuário</h2>
+          <h2 ng-show="isUpdate">Editar dados do usuário</h2>
+        </div>
+      </div>
+      <form novalidate name="form_name">
+        <div class="row">
+          <div class="col-xs-12">
+            <div ng-show="(error)" class="alert alert-danger">{{error}}</div>
+            <div ng-show="(done)" class="alert alert-success">{{done}}</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-6">
+            <div class="form-group">
+              <label for="nome">Nome
+                <app-required></app-required>
+              </label>
+              <input name="nome" placeholder="Informe seu nome" required ng-model="usuario.nome" type="text" class="form-control" id="nome">
+            </div>
+          </div>
+          <div class="col-xs-6">
+            <div class="form-group">
+              <label for="sobrenome">Sobrenome
+                <app-required></app-required>
+              </label>
+              <input name="sobrenome" placeholder="Informe seu sobrenome" required ng-model="usuario.sobrenome" type="text" class="form-control"
+                id="sobrenome">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-6">
+            <div class="form-group">
+              <label for="email">E-mail
+                <app-required></app-required>
+              </label>
+              <input nome="email" ng-disabled="isUpdate" placeholder="Informe seu e-mail" required ng-model="usuario.email" type="email"
+                class="form-control" id="email">
+            </div>
+          </div>
+          <div class="col-xs-6">
+            <div class="form-group" ng-class="{'has-error': (form_name.telefone.$touched && form_name.telefone.$invalid) }">
+              <label for="text">Telefone
+                <app-required></app-required>
+              </label>
+              <input name="telefone" placeholder="Informe seu telefone" required pattern="[\(]\d{2}[\)]\d{4}[\-]\d{4}" placeholder="(xx)xxxx-xxxx"
+                ng-model="usuario.telefone" type="text" class="form-control" id="telefone" />
+              <sup>
+                O formato do telefone deve obedecer o seguinte exemplo (71)9236-0303
+              </sup>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" ng-show="!isUpdate" ng-disabled="form_name.$invalid" ng-click="create()" class="btn btn-success">Enviar</button>
+        <button type="submit" ng-show="isUpdate" ng-disabled="form_name.$invalid" ng-click="update()" class="btn btn-primary">Atualizar</button>
+        <button type="button" ng-click="resetUser()" class="btn btn-default">Limpar</button>
+      </form>
+      <hr />
+      <h2>Usuários cadastrados</h2>
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Sobrenome</th>
+            <th>Email</th>
+            <th>Telefone</th>
+            <th>Opções</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="user in users">
+            <td>{{ user.nome }}</td>
+            <td>{{ user.sobrenome }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.telefone }}</td>
+            <td align="center">
+              <button class="btn btn-xs btn-primary" ng-click="setUser(user)">Editar</button>
+              <button class="btn btn-xs btn-danger" ng-click="delete(user.email)">Excluir</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script src="/exercicio7/assets/bootstrap/js/jquery.min.js"></script>
+  <script src="/exercicio7/assets/bootstrap/js/bootstrap.min.js"></script>
+  <script src="/exercicio7/assets/angular-1.6.9/angular.min.js"></script>
+  <script>
+    var app = angular.module('exemple7App', []);
+    app.controller('exemple7Ctrl', function ($scope, $http) {
+      $scope.isUpdate = false;
+      $scope.error = false;
+      $scope.users = [];
+      function userAttributes() {
+        return {
+          nome: '',
+          sobrenome: '',
+          email: '',
+          telefone: ''
+        };
+      }
+
+      $scope.usuario = userAttributes();
+
+      $scope.create = function () {
+        $http.post('/exercicio7/api/users/create', $scope.usuario).then(function (response) {
+          if (response.data.done) {
+            $scope.error = false;
+            $scope.done = response.data.message;
+            $scope.usuario = userAttributes();
+            init();
+          }
+          if (!response.data.done) {
+            $scope.done = false;
+            $scope.error = response.data.message;
+          }
+        });
+      };
+
+      $scope.setUser = function (user) {
+        $scope.usuario = user;
+        $scope.isUpdate = true;
+      };
+
+      $scope.resetUser = function () {
+        $scope.usuario = userAttributes();
+        $scope.isUpdate = false;
+      };
+
+      $scope.update = function () {
+        $http.put('/exercicio7/api/users/update', $scope.usuario).then(function (response) {
+          if (response.data.done) {
+            $scope.error = false;
+            $scope.done = response.data.message;
+            init();
+          }
+          if (!response.data.done) {
+            $scope.done = false;
+            $scope.error = response.data.message;
+          }
+        });
+      };
+
+      $scope.delete = function (email) {
+        $http.delete('/exercicio7/api/users/delete', { params: { email: email } }).then(function (response) {
+          if (response.data.done) {
+            $scope.error = false;
+            $scope.done = response.data.message;
+            init();
+          }
+          if (!response.data.done) {
+            $scope.done = false;
+            $scope.error = response.data.message;
+          }
+        });
+      };
+
+      function init() {
+        $http.get("/exercicio7/api/users/list").then(function (response) {
+          $scope.users = response.data;
+        });
+      };
+      init();
+    });
+    app.directive("appRequired", function () {
+      return { template: '<span style="color: red">*</span>' };
+    });
+  </script>
+</body>
+
+</html>
